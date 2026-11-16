@@ -44,11 +44,15 @@ sistema-solar-qwen3.6/
 
 ## Características principales
 - **Velocidades:** Proporcionales a períodos orbitales y de rotación reales (`1 año terrestre = 10 s` de simulación por defecto).
-- **Controles:** Panel lateral vertical para velocidad de simulación, pausa/reanudar, reinicio de cámara 3D, zoom, filtros de visibilidad (planetas, cinturón de asteroides, planetas enanos, órbitas, etiquetas) y tarjeta flotante (`hover`) con ficha astronómica.
+- **Controles:** Panel lateral vertical para velocidad de simulación, pausa/reanudar, reinicio de cámara 3D, zoom, select de ángulo de inclinación (0°, 25°, 50°, 75°, 90°), filtros de visibilidad (planetas, cinturón de asteroides, planetas enanos, órbitas, etiquetas) y tarjeta flotante (`hover`) con ficha astronómica.
 
 ## Herramientas disponibles
 - `webfetch`: ✅ Disponible para consultar URLs si hiciera falta.
 - `websearch`: ❌ No disponible (error HTTP 402) — nunca intentar usarla.
+
+## Inconvenientes conocidos (se subsanarán en iteraciones futuras)
+- **Archivos fuente vacíos**: Todos los módulos (`main.js`, `index.html`, `global.css`, `api.js`, `math3d.js`, `state.js`, `ui.js`) están actualmente vacíos — se implementarán la próxima iteración.
+- **Scripts de lint/format**: Los comandos `pnpm run lint` y `pnpm run format` apuntan a `src/`, pero al no haber código aún no tienen nada que corregir.
 
 ## Convenciones de código y estilo
 - **Edición quirúrgica:** Lee solo las secciones necesarias antes de editar y aplica cambios precisos sin reescribir archivos completos.

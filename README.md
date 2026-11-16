@@ -30,4 +30,4 @@ Visualización interactiva del sistema solar en el navegador, con datos astronó
 
 ## Ejecución local
 
-Abre `src/index.html` en cualquier navegador moderno (Chrome, Edge, Firefox). No se requiere servidor ni dependencias externas.
+Levantar un servidor local (ej. `npx servor src/ index.html 1234 --reload`) y abrir `http://localhost:1234`. Los módulos ES6+ (`type="module"`) requieren protocolo `http(s)` — abrir con doble clic (`file://`) generará error de CORS.
