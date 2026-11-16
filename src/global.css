@@ -1,0 +1,251 @@
+/* ================================================================
+   Variables CSS y estilos globales — Sistema Solar 3D
+   ================================================================ */
+
+:root {
+  /* Colores */
+  --color-bg: #0a0a1a;
+  --color-panel-bg: rgba(15, 15, 30, 0.88);
+  --color-panel-border: rgba(100, 120, 200, 0.25);
+  --color-text: #e0e0f0;
+  --color-text-muted: #9090b0;
+  --color-accent: #6488ff;
+  --color-accent-hover: #8aa4ff;
+  --color-btn-bg: rgba(60, 60, 100, 0.5);
+  --color-btn-active: rgba(100, 136, 255, 0.4);
+
+  /* Tipografía */
+  --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* Espaciado del panel */
+  --panel-width: 240px;
+  --panel-gap: 16px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+}
+
+/* ---------- Reset base ---------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ---------- Canvas fullscreen ---------- */
+canvas#solar-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  cursor: grab;
+}
+
+canvas#solar-canvas:active {
+  cursor: grabbing;
+}
+
+/* ---------- Panel lateral de controles (aside) ---------- */
+.controls-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--panel-width);
+  height: 100%;
+  z-index: 100;
+  background: var(--color-panel-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid var(--color-panel-border);
+  padding: var(--panel-gap);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--panel-gap);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 120, 200, 0.3) transparent;
+}
+
+.controls-panel::-webkit-scrollbar {
+  width: 4px;
+}
+
+.controls-panel::-webkit-scrollbar-thumb {
+  background: rgba(100, 120, 200, 0.3);
+  border-radius: 2px;
+}
+
+/* ---------- Header del panel ---------- */
+.controls-panel > header {
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px 0 4px;
+  letter-spacing: 0.5px;
+  color: var(--color-accent);
+}
+
+/* ---------- Grupos de controles (section) ---------- */
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-group > label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+/* ---------- Grupo de botones (velocidad) ---------- */
+.btn-group {
+  display: flex;
+  gap: 4px;
+}
+
+.speed-btn,
+#btn-pause,
+#btn-reset {
+  flex: 1;
+  padding: 7px 8px;
+  border: 1px solid var(--color-panel-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-btn-bg);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.speed-btn:hover,
+#btn-pause:hover,
+#btn-reset:hover {
+  background: rgba(80, 80, 140, 0.6);
+  border-color: var(--color-accent);
+}
+
+.speed-btn.active {
+  background: var(--color-btn-active);
+  border-color: var(--color-accent);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ---------- Select de inclinación ---------- */
+#select-inclination {
+  padding: 6px 8px;
+  border: 1px solid var(--color-panel-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-btn-bg);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+#select-inclination:hover,
+#select-inclination:focus {
+  border-color: var(--color-accent);
+}
+
+/* ---------- Toggles (checkboxes) ---------- */
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 0;
+  color: var(--color-text);
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.toggle-label:hover {
+  color: var(--color-accent-hover);
+}
+
+.toggle-label input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--color-panel-border);
+  border-radius: 3px;
+  background: var(--color-btn-bg);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.toggle-label input[type='checkbox']:checked {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.toggle-label input[type='checkbox']:checked::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ---------- Barra de estado (nav) ---------- */
+.status-bar {
+  margin-top: auto;
+  padding: 10px 0 4px;
+  border-top: 1px solid var(--color-panel-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ---------- Tarjetas hover (se renderizan en canvas, pero el panel las acompaña) ---------- */
+/* Las tarjetas se dibujan directamente sobre el canvas por drawHoverCard() */
+
+/* ---------- Accesibilidad: foco visible ---------- */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Responsive: panel en pantallas pequeñas ---------- */
+@media (max-width: 480px) {
+  :root {
+    --panel-width: 200px;
+  }
+
+  .controls-panel > header {
+    font-size: 15px;
+  }
+}

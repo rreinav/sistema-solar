@@ -19,9 +19,11 @@ sistema-solar-qwen3.6/
 │   ├── main.js                 # Orquestador principal y bucle animationFrame (type="module")
 │   └── modules/                # Módulos ES6+ desacoplados (<250 líneas cada uno)
 │       ├── api.js              # Datos astronómicos reales extraídos de investigacion/
-│       ├── state.js            # Estado global (velocidad, pausa, cámara 3D, visibilidad)
+│       ├── state.js            # Estado global unificado (cámara, sim, visibilidad, mouse, canvas, resetState)
 │       ├── math3d.js           # Cinemática orbital 3D (x, y, z), rotación de cámara y proyección 2D
-│       └── ui.js               # Renderizado en canvas (Z-sorting), eventos de ratón y panel UI
+│       ├── helpers.js          # Utilidades: roundRect, hexToRGBA, lightenColor, formatDays, capitalize
+│       ├── ui.js               # Renderizado en canvas (Z-sorting), eventos de ratón y tarjeta hover
+│       └── controls.js         # Panel de controles lateral (velocidad, pausa, toggles, inclinación)
 └── investigacion/              # Documentación astronómica de referencia (ya completada)
     ├── sol.md
     ├── planetas-interiores.md
@@ -33,7 +35,7 @@ sistema-solar-qwen3.6/
 - **HTML5 semántico:** Uso estricto de `header`, `main`, `section`, `nav`, `aside` y `canvas`.
 - **CSS3 moderno:** Variables personalizadas (`:root`), Grid, Flexbox y unidades relativas en `src/global.css`.
 - **JavaScript ES6+ nativo:** ES Modules (`<script type="module" src="main.js">`), sin frameworks ni librerías externas.
-- **Ejecución local:** No abrir `index.html` con doble clic (`file://`) por bloqueo CORS de módulos. Levantar servidor local (ej. `python3 -m http.server -d src 8000`) y abrir `http://localhost:8000`.
+- **Ejecución local:** No abrir `index.html` con doble clic (`file://`) por bloqueo CORS de módulos. Levantar servidor con `pnpm run dev` → `servor src/ index.html 1234 --reload` y abrir `http://localhost:1234`.
 
 ## Arquitectura del Motor 3D (Canvas 2D + Proyección Matemática)
 - **Coordenadas espaciales `(x, y, z)`:** Calculadas en 3D usando distancia logarítmica basada en UA, ángulo orbital actual, excentricidad e inclinación orbital real respecto a la eclíptica.
@@ -50,9 +52,26 @@ sistema-solar-qwen3.6/
 - `webfetch`: ✅ Disponible para consultar URLs si hiciera falta.
 - `websearch`: ❌ No disponible (error HTTP 402) — nunca intentar usarla.
 
-## Inconvenientes conocidos (se subsanarán en iteraciones futuras)
-- **Archivos fuente vacíos**: Todos los módulos (`main.js`, `index.html`, `global.css`, `api.js`, `math3d.js`, `state.js`, `ui.js`) están actualmente vacíos — se implementarán la próxima iteración.
-- **Scripts de lint/format**: Los comandos `pnpm run lint` y `pnpm run format` apuntan a `src/`, pero al no haber código aún no tienen nada que corregir.
+## Estado actual del proyecto
+- Todos los módulos están implementados y funcionando (6 archivos JS en `src/modules/` + `main.js`).
+- Duplicados eliminados: `src/state.js` y `src/math3d.js` removidos. Consolidación completa a `src/modules/state.js`.
+- No se han configurado scripts de lint/format — son mejoras futuras opcionales.
+
+## Revisión pendiente
+1. **Órbitas planetarias** — trayectorias elípticas con excentricidad e inclinación adecuadas.
+   - Los planetas parece que sí se muestran correctamente.
+   - Los planetas enanos (excepto Ceres) parecen tener trayectorias incorrectas.
+2. **Posiciones de los planetas** — posición orbital basada en parámetros keplerianos.
+   - Parece que sí.
+3. **Renderizado 3D** — proyección perspectiva, Z-sorting y oclusión correcta.
+   - Confirmado: funciona (planetas más cercanos se ven más grandes, oclusión correcta).
+4. **Controles** — panel lateral con velocidad, pausa, inclinación y toggles de visibilidad.
+   - Velocidad: funciona correctamente.
+   - Pausa: funciona bien, pero debe moverse junto a los botones de velocidad. Al pausar desactiva las etiquetas; al reanudarlas activa.
+   - Inclinación: funciona correctamente.
+   - Visibilidad: funcionan cinturón de asteroides y órbitas; no funcionan planetas, planetas enanos ni etiquetas.
+5. **Hover cards** — ficha astronómica al pasar el mouse sobre un planeta.
+   - Aparece correctamente, pero debe desaparecer al quitar el cursor del planeta.
 
 ## Convenciones de código y estilo
 - **Edición quirúrgica:** Lee solo las secciones necesarias antes de editar y aplica cambios precisos sin reescribir archivos completos.
