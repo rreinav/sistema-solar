@@ -36,7 +36,7 @@ export function lightenColor(hex, amount) {
 
 /** Capitaliza texto */
 export function capitalize(str) {
-  return str.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  return str.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 /** Formatea días en años si supera 365 */

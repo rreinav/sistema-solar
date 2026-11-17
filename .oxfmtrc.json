@@ -1,0 +1,13 @@
+{
+  "indentStyle": "space",
+  "indentSize": 2,
+  "lineWidth": 100,
+  "quoteStyle": {
+    "jsx": "single",
+    "literal": "always"
+  },
+  "semicolons": false,
+  "trailingComma": "none",
+  "arrowParentheses": "asNeeded",
+  "lineEnding": "lf"
+}

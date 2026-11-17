@@ -36,7 +36,7 @@ export const state = {
 
   // Canvas dimensions
   canvasWidth: window.innerWidth,
-  canvasHeight: window.innerHeight,
+  canvasHeight: window.innerHeight
 };
 
 /** Velocidad angular media de un cuerpo (radianes por día) */

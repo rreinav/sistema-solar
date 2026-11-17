@@ -1,18 +1,29 @@
 // Renderizado en canvas, eventos de ratón y panel UI
 
-import { state } from './state.js';
-import { calculateAllPositions, drawOrbitPaths, generateAsteroids, projectPosition } from './math3d.js';
-import { hexToRGBA, lightenColor, roundRect, capitalize, formatDays } from './helpers.js';
+import { state } from "./state.js";
+import {
+  calculateAllPositions,
+  drawOrbitPaths,
+  generateAsteroids,
+  projectPosition
+} from "./math3d.js";
+import { hexToRGBA, lightenColor, roundRect, capitalize, formatDays } from "./helpers.js";
 
 let asteroidCache = [];
 
 /** Dibuja estrellas de fondo */
 function drawStars(ctx, W, H) {
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = "#fff";
   for (let i = 0; i < 300; i++) {
     ctx.globalAlpha = 0.3 + (i % 7) / 10;
     ctx.beginPath();
-    ctx.arc((i * 7919 + 42) % W, (i * 6271 + 42) % H, ((i * 3) % 3 === 0) ? 1.5 : 0.8, 0, Math.PI * 2);
+    ctx.arc(
+      (i * 7919 + 42) % W,
+      (i * 6271 + 42) % H,
+      (i * 3) % 3 === 0 ? 1.5 : 0.8,
+      0,
+      Math.PI * 2
+    );
     ctx.fill();
   }
   ctx.globalAlpha = 1;
@@ -23,17 +34,21 @@ function drawBody(ctx, body) {
   const r = body.visualRadius * body.scale * state.cameraZoom;
 
   // Anillos
-  if (body.hasRings && body.category !== 'star') {
+  if (body.hasRings && body.category !== "star") {
     drawRings(ctx, body, r);
   }
 
   // Brillo/glow
   const glowGradient = ctx.createRadialGradient(
-    body.screenX, body.screenY, 0,
-    body.screenX, body.screenY, r * 2.5
+    body.screenX,
+    body.screenY,
+    0,
+    body.screenX,
+    body.screenY,
+    r * 2.5
   );
   glowGradient.addColorStop(0, hexToRGBA(body.color, 0.3));
-  glowGradient.addColorStop(1, 'transparent');
+  glowGradient.addColorStop(1, "transparent");
   ctx.fillStyle = glowGradient;
   ctx.beginPath();
   ctx.arc(body.screenX, body.screenY, r * 2.5, 0, Math.PI * 2);
@@ -41,8 +56,12 @@ function drawBody(ctx, body) {
 
   // Cuerpo principal
   const gradient = ctx.createRadialGradient(
-    body.screenX - r * 0.3, body.screenY - r * 0.3, r * 0.1,
-    body.screenX, body.screenY, r
+    body.screenX - r * 0.3,
+    body.screenY - r * 0.3,
+    r * 0.1,
+    body.screenX,
+    body.screenY,
+    r
   );
   gradient.addColorStop(0, lightenColor(body.color, 30));
   gradient.addColorStop(1, body.color);
@@ -53,9 +72,9 @@ function drawBody(ctx, body) {
 
   // Etiqueta de nombre
   if (state.showLabels && !state.paused) {
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    ctx.font = '12px sans-serif';
-    ctx.textAlign = 'center';
+    ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+    ctx.font = "12px sans-serif";
+    ctx.textAlign = "center";
     ctx.fillText(body.symbol + body.name, body.screenX, body.screenY + r + 16);
   }
 
@@ -107,7 +126,7 @@ function drawHoverCard(ctx, body) {
     `Velocidad orbital: ${body.orbitalSpeed} km/s`,
     body.mass ? `Masa: ${body.mass}` : null,
     body.temperature ? `Temperatura: ${body.temperature}` : null,
-    body.ringDescription ? `Anillos: ${body.ringDescription}` : null,
+    body.ringDescription ? `Anillos: ${body.ringDescription}` : null
   ].filter(Boolean);
 
   const cardHeight = padding * 2 + lines.length * lineHeight;
@@ -118,26 +137,26 @@ function drawHoverCard(ctx, body) {
   if (cardY < 10) cardY = 10;
   if (cardY + cardHeight > ctx.canvas.height) cardY = ctx.canvas.height - cardHeight - 10;
 
-  ctx.fillStyle = 'rgba(20, 20, 40, 0.92)';
+  ctx.fillStyle = "rgba(20, 20, 40, 0.92)";
   ctx.strokeStyle = hexToRGBA(body.color, 0.6);
   ctx.lineWidth = 1;
   roundRect(ctx, cardX, cardY, cardWidth, cardHeight, 8);
   ctx.fill();
   ctx.stroke();
 
-  ctx.font = 'bold 14px sans-serif';
-  ctx.textAlign = 'left';
+  ctx.font = "bold 14px sans-serif";
+  ctx.textAlign = "left";
   lines.forEach((line, i) => {
     const y = cardY + padding + i * lineHeight;
-    ctx.fillStyle = i === 0 ? body.color : '#ccc';
-    ctx.font = i === 0 ? 'bold 16px sans-serif' : '12px sans-serif';
+    ctx.fillStyle = i === 0 ? body.color : "#ccc";
+    ctx.font = i === 0 ? "bold 16px sans-serif" : "12px sans-serif";
     ctx.fillText(line, cardX + padding, y);
   });
 }
 
 /** Inicializa el canvas y los event listeners */
 export function initUI(canvas) {
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
 
   // Responsive: adaptar al tamaño de la ventana
   function resizeCanvas() {
@@ -148,13 +167,13 @@ export function initUI(canvas) {
   }
 
   resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
+  window.addEventListener("resize", resizeCanvas);
 
   // Generar asteroides una sola vez
   asteroidCache = generateAsteroids();
 
   // Eventos de ratón para rotación de cámara
-  canvas.addEventListener('mousedown', (e) => {
+  canvas.addEventListener("mousedown", (e) => {
     if (e.button === 0) {
       state.isDragging = true;
       state.lastMouseX = e.clientX;
@@ -162,7 +181,7 @@ export function initUI(canvas) {
     }
   });
 
-  window.addEventListener('mousemove', (e) => {
+  window.addEventListener("mousemove", (e) => {
     // Actualizar posición para hover detection
     state.mouseX = e.clientX;
     state.mouseY = e.clientY;
@@ -181,17 +200,21 @@ export function initUI(canvas) {
     }
   });
 
-  window.addEventListener('mouseup', () => {
+  window.addEventListener("mouseup", () => {
     state.isDragging = false;
   });
 
   // Zoom con rueda del ratón
-  canvas.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-    state.cameraZoom *= zoomFactor;
-    state.cameraZoom = Math.max(0.1, Math.min(5, state.cameraZoom));
-  }, { passive: false });
+  canvas.addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+      state.cameraZoom *= zoomFactor;
+      state.cameraZoom = Math.max(0.1, Math.min(5, state.cameraZoom));
+    },
+    { passive: false }
+  );
 
   // Dibujado principal (se llama desde el bucle de animación)
   function render() {
@@ -199,7 +222,7 @@ export function initUI(canvas) {
     const H = canvas.height;
 
     // Fondo estrellado
-    ctx.fillStyle = '#0a0a1a';
+    ctx.fillStyle = "#0a0a1a";
     ctx.fillRect(0, 0, W, H);
 
     // Estrellas de fondo (generadas aleatoriamente pero con seed fijo por frame)

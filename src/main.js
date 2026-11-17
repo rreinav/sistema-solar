@@ -1,8 +1,8 @@
 // Orquestador principal: inicialización, bucle de animación y gestión de ciclo de vida
 
-import { state } from './modules/state.js';
-import { initUI } from './modules/ui.js';
-import { createControls } from './modules/controls.js';
+import { state } from "./modules/state.js";
+import { initUI } from "./modules/ui.js";
+import { createControls } from "./modules/controls.js";
 
 /** Tiempo de referencia: 1 año terrestre = 10 segundos a ×1 */
 const SECONDS_PER_YEAR = 10;
@@ -27,7 +27,7 @@ function animationLoop(timestamp) {
   }
 
   // Ejecutar renderizado (expuesto como window._render en ui.js)
-  if (typeof window._render === 'function') {
+  if (typeof window._render === "function") {
     window._render();
   }
 
@@ -35,10 +35,10 @@ function animationLoop(timestamp) {
 }
 
 /** Inicialización: se ejecuta al cargar el DOM */
-document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.querySelector('#solar-canvas');
+document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.querySelector("#solar-canvas");
   if (!canvas) {
-    console.error('No se encontró el elemento #solar-canvas');
+    console.error("No se encontró el elemento #solar-canvas");
     return;
   }
 
@@ -51,5 +51,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // Iniciar bucle de animación
   requestAnimationFrame(animationLoop);
 
-  console.log('Sistema Solar 3D inicializado');
+  console.log("Sistema Solar 3D inicializado");
 });

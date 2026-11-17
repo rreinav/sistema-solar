@@ -15,8 +15,8 @@
   --color-btn-active: rgba(100, 136, 255, 0.4);
 
   /* Tipografía */
-  --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  --font-main: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
 
   /* Espaciado del panel */
   --panel-width: 240px;
@@ -34,7 +34,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -186,7 +187,7 @@ canvas#solar-canvas:active {
   color: var(--color-accent-hover);
 }
 
-.toggle-label input[type='checkbox'] {
+.toggle-label input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
   width: 16px;
@@ -200,13 +201,13 @@ canvas#solar-canvas:active {
   flex-shrink: 0;
 }
 
-.toggle-label input[type='checkbox']:checked {
+.toggle-label input[type="checkbox"]:checked {
   background: var(--color-accent);
   border-color: var(--color-accent);
 }
 
-.toggle-label input[type='checkbox']:checked::after {
-  content: '';
+.toggle-label input[type="checkbox"]:checked::after {
+  content: "";
   position: absolute;
   top: 1px;
   left: 4px;

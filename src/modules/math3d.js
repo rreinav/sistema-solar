@@ -1,10 +1,9 @@
 /** Motor 3D: proyección perspectiva, cinemática orbital, asteroides */
 
-import { CELESTIAL_BODIES, SUN_DATA, ASTEROID_BELTS } from './api.js';
-import { state } from './state.js';
+import { CELESTIAL_BODIES, SUN_DATA } from "./api.js";
+import { state } from "./state.js";
 
 const DEG = Math.PI / 180;
-const AU_KM = 149597870.7;
 const distanceScale = 120; // Factor de escala visual para distancias en UA
 
 /** Escala logarítmica: log2(1 + au) * distanceScale */
@@ -32,7 +31,8 @@ function getOrbitalPosition(body, simTimeDays) {
 
   // Verdadera anomalía
   const cosV = (Math.cos(E) - body.eccentricity) / (1 - body.eccentricity * Math.cos(E));
-  const sinV = (Math.sqrt(1 - body.eccentricity ** 2) * Math.sin(E)) / (1 - body.eccentricity * Math.cos(E));
+  const sinV =
+    (Math.sqrt(1 - body.eccentricity ** 2) * Math.sin(E)) / (1 - body.eccentricity * Math.cos(E));
 
   // Distancia al Sol en UA
   const r = body.semiMajorAxis * (1 - body.eccentricity * Math.cos(E));
@@ -50,9 +50,9 @@ function getOrbitalPosition(body, simTimeDays) {
   // Escala logarítmica para visualización (y → eje vertical, z → profundidad)
   const scaledDist = scaleDistance(r);
   return {
-    x: scaledDist * xInclined / (r || 1),
-    y: scaledDist * zInclined / (r || 1),
-    z: scaledDist * yInclined / (r || 1),
+    x: (scaledDist * xInclined) / (r || 1),
+    y: (scaledDist * zInclined) / (r || 1),
+    z: (scaledDist * yInclined) / (r || 1)
   };
 }
 
@@ -95,13 +95,13 @@ export function projectPosition(x, y, z) {
     screenX: state.canvasWidth / 2 + x1 * scale,
     screenY: state.canvasHeight / 2 + y1 * scale,
     depthZ: z2,
-    scale,
+    scale
   };
 }
 
 /** Dibuja las trayectorias orbitales en el canvas */
 export function drawOrbitPaths(ctx) {
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.12)";
   ctx.lineWidth = 1;
 
   for (const body of CELESTIAL_BODIES) {
@@ -148,7 +148,7 @@ export function generateAsteroids(count = 300) {
       y: spread,
       z: scaledDist * Math.sin(angle),
       size: 0.5 + pseudoRandom() * 1.5,
-      brightness: 0.3 + pseudoRandom() * 0.5,
+      brightness: 0.3 + pseudoRandom() * 0.5
     });
   }
 
@@ -170,7 +170,7 @@ export function generateStars(count = 400) {
       x: pseudoRandom() * 3000 - 1500,
       y: pseudoRandom() * 2000 - 1000,
       size: 0.3 + pseudoRandom() * 1.2,
-      brightness: 0.4 + pseudoRandom() * 0.6,
+      brightness: 0.4 + pseudoRandom() * 0.6
     });
   }
 
