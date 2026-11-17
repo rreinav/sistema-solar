@@ -87,14 +87,18 @@ export function projectPosition(x, y, z) {
   const y1 = y * cosPitch - z1 * sinPitch;
   const z2 = y * sinPitch + z1 * cosPitch;
 
-  // Proyección perspectiva
-  const fov = 800 * cameraZoom;
-  const scale = fov / (fov + z2);
+  // Proyección perspectiva: zoom escala coordenadas (distancia real de cámara)
+  const fov = 800;
+  const scaleZ = cameraZoom || 1;
+  const sx = x1 * scaleZ;
+  const sy = y1 * scaleZ;
+  const sz = z2 * scaleZ;
+  const scale = fov / (fov + sz);
 
   return {
-    screenX: state.canvasWidth / 2 + x1 * scale,
-    screenY: state.canvasHeight / 2 + y1 * scale,
-    depthZ: z2,
+    screenX: state.canvasWidth / 2 + sx * scale,
+    screenY: state.canvasHeight / 2 + sy * scale,
+    depthZ: sz,
     scale
   };
 }
@@ -105,6 +109,11 @@ export function drawOrbitPaths(ctx) {
   ctx.lineWidth = 1;
 
   for (const body of CELESTIAL_BODIES) {
+    // Filtrar órbitas de planetas regulares según toggle
+    if (body.category === "planet" && !state.showPlanets) continue;
+    // Filtrar órbitas de planetas enanos según toggle
+    if (body.category === "dwarf_planet" && !state.showDwarfPlanets) continue;
+
     const steps = 128;
     ctx.beginPath();
 

@@ -5,25 +5,28 @@ import {
   calculateAllPositions,
   drawOrbitPaths,
   generateAsteroids,
-  projectPosition
+  projectPosition,
+  starField
 } from "./math3d.js";
+import { SUN_DATA } from "./api.js";
 import { hexToRGBA, lightenColor, roundRect, capitalize, formatDays } from "./helpers.js";
+
+const fmt = (n) => new Intl.NumberFormat("es-ES", { maximumFractionDigits: 3 }).format(n);
 
 let asteroidCache = [];
 
-/** Dibuja estrellas de fondo */
+/** Dibuja estrellas de fondo (distribución aleatoria real) */
 function drawStars(ctx, W, H) {
-  ctx.fillStyle = "#fff";
-  for (let i = 0; i < 300; i++) {
-    ctx.globalAlpha = 0.3 + (i % 7) / 10;
+  const rangeX = 3000; // -1500 a 1500
+  const rangeY = 2000; // -1000 a 1000
+
+  for (const star of starField) {
+    ctx.fillStyle = "#fff";
+    ctx.globalAlpha = star.brightness;
+    const screenX = ((star.x + 1500) / rangeX) * W;
+    const screenY = ((star.y + 1000) / rangeY) * H;
     ctx.beginPath();
-    ctx.arc(
-      (i * 7919 + 42) % W,
-      (i * 6271 + 42) % H,
-      (i * 3) % 3 === 0 ? 1.5 : 0.8,
-      0,
-      Math.PI * 2
-    );
+    ctx.arc(screenX, screenY, star.size, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.globalAlpha = 1;
@@ -31,7 +34,14 @@ function drawStars(ctx, W, H) {
 
 /** Dibuja un cuerpo celeste individual */
 function drawBody(ctx, body) {
-  const r = body.visualRadius * body.scale * state.cameraZoom;
+  // Filtrar por categoría según toggles de visibilidad
+  const isPlanet = body.category === "planet";
+  const isDwarf = body.category === "dwarf_planet";
+
+  if (isPlanet && !state.showPlanets) return;
+  if (isDwarf && !state.showDwarfPlanets) return;
+
+  const r = body.visualRadius * body.scale;
 
   // Anillos
   if (body.hasRings && body.category !== "star") {
@@ -71,7 +81,7 @@ function drawBody(ctx, body) {
   ctx.fill();
 
   // Etiqueta de nombre
-  if (state.showLabels && !state.paused) {
+  if (state.showLabels) {
     ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
     ctx.font = "12px sans-serif";
     ctx.textAlign = "center";
@@ -116,10 +126,49 @@ function drawHoverCard(ctx, body) {
   const padding = 16;
   const cardWidth = 280;
   const lineHeight = 22;
+
+  // Estrellas (Sol): mostrar datos estelares desde SUN_DATA
+  if (body.category === "star") {
+    const lines = [
+      `${SUN_DATA.symbol} ${SUN_DATA.name}`,
+      `Tipo: ${SUN_DATA.type}`,
+      `Masa: ${SUN_DATA.mass}`,
+      `Radio: ${SUN_DATA.radius}`,
+      `Temperatura: ${SUN_DATA.temperature}`,
+      `Composición: ${SUN_DATA.composition}`,
+      `Per. rotación: ${SUN_DATA.rotationPeriod}`
+    ];
+
+    const cardHeight = padding * 2 + lines.length * lineHeight;
+    let cardX = body.screenX + 30;
+    let cardY = body.screenY - cardHeight / 2;
+
+    if (cardX + cardWidth > ctx.canvas.width) cardX = body.screenX - cardWidth - 30;
+    if (cardY < 10) cardY = 10;
+    if (cardY + cardHeight > ctx.canvas.height) cardY = ctx.canvas.height - cardHeight - 10;
+
+    ctx.fillStyle = "rgba(20, 20, 40, 0.92)";
+    ctx.strokeStyle = hexToRGBA(SUN_DATA.color, 0.6);
+    ctx.lineWidth = 1;
+    roundRect(ctx, cardX, cardY, cardWidth, cardHeight, 8);
+    ctx.fill();
+    ctx.stroke();
+
+    lines.forEach((line, i) => {
+      const y = cardY + padding + i * lineHeight;
+      ctx.fillStyle = i === 0 ? SUN_DATA.color : "#ccc";
+      ctx.font = i === 0 ? "bold 16px sans-serif" : "12px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText(line, cardX + padding, y);
+    });
+    return;
+  }
+
+  // Cuerpos orbitales: planetas y planetas enanos
   const lines = [
     `${body.symbol} ${body.name}`,
     `Categoría: ${capitalize(body.category)}`,
-    `Distancia al Sol: ${body.semiMajorAxis.toFixed(3)} UA`,
+    `Distancia al Sol: ${fmt(body.semiMajorAxis)} UA`,
     `Excentricidad: ${body.eccentricity.toFixed(4)}`,
     `Inclinación: ${body.inclination.toFixed(2)}°`,
     `Período orbital: ${formatDays(body.orbitalPeriod)}`,
@@ -144,12 +193,11 @@ function drawHoverCard(ctx, body) {
   ctx.fill();
   ctx.stroke();
 
-  ctx.font = "bold 14px sans-serif";
-  ctx.textAlign = "left";
   lines.forEach((line, i) => {
     const y = cardY + padding + i * lineHeight;
     ctx.fillStyle = i === 0 ? body.color : "#ccc";
     ctx.font = i === 0 ? "bold 16px sans-serif" : "12px sans-serif";
+    ctx.textAlign = "left";
     ctx.fillText(line, cardX + padding, y);
   });
 }
@@ -212,12 +260,22 @@ export function initUI(canvas) {
       const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
       state.cameraZoom *= zoomFactor;
       state.cameraZoom = Math.max(0.1, Math.min(5, state.cameraZoom));
+      // Sincronizar slider y display
+      const slider = document.getElementById("slider-zoom");
+      if (slider) {
+        slider.value = state.cameraZoom;
+        const display = document.getElementById("zoom-value");
+        if (display) display.textContent = state.cameraZoom.toFixed(1);
+      }
     },
     { passive: false }
   );
 
   // Dibujado principal (se llama desde el bucle de animación)
   function render() {
+    // Reset hover card al inicio de cada frame
+    state.hoveredBody = null;
+
     const W = canvas.width;
     const H = canvas.height;
 

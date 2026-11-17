@@ -1,4 +1,4 @@
-# Sistema Solar
+# Sistema Solar v0.1.1
 
 Visualización interactiva del sistema solar en el navegador, con datos astronómicos reales, animación proporcional a los períodos orbitales y herramientas de control completas.
 
@@ -15,17 +15,17 @@ Visualización interactiva del sistema solar en el navegador, con datos astronó
 | Control | Acción |
 |---|---|
 | `×1  ×10  ×100` | Botones de velocidad de simulación |
-| `⏸ Pausar / ▶ Reanudar` | Pausa y reanudación de la simulación |
-| `🔄 Reiniciar cámara` | Restaura vista a posición por defecto (yaw=0.5, pitch=0.4) |
+| `⏸ Pausar / ▶ Reanudar` | Pausa y reanudación de la simulación (junto a los botones de velocidad) |
+| `🔄 Reiniciar cámara` | Restaura vista a posición por defecto (yaw=0, pitch=0.4) |
 | `Inclinación` | Select: Plana (0°), Media (25°), Inclinada (50°), Marginal (75°), Lateral (90°) |
-| `☑ Planetas` | Mostrar/ocultar planetas |
-| `☑ Cinturón de asteroides` | Mostrar/ocultar cinturón de asteroides |
-| `☑ Planetas enanos` | Mostrar/ocultar planetas enanos |
+| `☑ Planetas` | Mostrar/ocultar planetas interiores y exteriores |
+| `☑ Planetas enanos` | Mostrar/ocultar planetas enanos (Plutón, Eris, etc.) |
+| `☑ Cinturón de asteroides` | Mostrar/ocultar cinturón de asteroides entre Marte y Júpiter |
 | `☑ Órbitas` | Mostrar/ocultar líneas orbitales |
 | `☑ Etiquetas` | Mostrar/ocultar nombres de cuerpos celestes |
-| Rueda del ratón | Zoom (centrado en el Sol) |
+| Rueda del ratón / Slider | Zoom (centrado en el Sol, escala coordenadas 3D) |
 | Arrastrar con ratón | Rotación libre de cámara (yaw y pitch) |
-| Hover sobre un astro | Muestra tarjeta flotante con datos astronómicos |
+| Hover sobre un astro | Muestra tarjeta flotante con datos astronómicos (planeta, planeta enano o estrella) |
 
 ## Barra de estado (inferior del panel)
 

@@ -52,26 +52,25 @@ sistema-solar-qwen3.6/
 - `webfetch`: ✅ Disponible para consultar URLs si hiciera falta.
 - `websearch`: ❌ No disponible (error HTTP 402) — nunca intentar usarla.
 
-## Estado actual del proyecto
-- Todos los módulos están implementados y funcionando (6 archivos JS en `src/modules/` + `main.js`).
-- Duplicados eliminados: `src/state.js` y `src/math3d.js` removidos. Consolidación completa a `src/modules/state.js`.
-- No se han configurado scripts de lint/format — son mejoras futuras opcionales.
+## Estado actual del proyecto v0.1.1
+- ✅ Todos los módulos implementados y funcionando (6 archivos JS en `src/modules/` + `main.js`).
+- ✅ Órbitas elípticas con excentricidad e inclinación orbital correctas para planetas y planetas enanos.
+- ✅ Posiciones orbitales basadas en parámetros keplerianos.
+- ✅ Renderizado 3D con proyección perspectiva, Z-sorting y oclusión correcta.
+- ✅ Zoom escala coordenadas 3D por `cameraZoom` antes de la proyección; radio visual NO multiplica por zoom.
+- ✅ Fondo estelar pre-generado (`starField` desde `math3d.js`).
+- ✅ Inclinación por defecto: 25°.
+- ✅ Panel lateral completo: velocidad, pausa/reanudar (junto a botones de velocidad), reinicio cámara, zoom horizontal, select de inclinación.
+- ✅ Toggles de visibilidad funcionales: Planetas, Planetas enanos, Cinturón de asteroides, Órbitas, Etiquetas.
+- ✅ Pausa y etiquetas independientes. Al pausar no bloquea etiquetas.
+- ✅ Hover cards con ficha astronómica para planetas, planetas enanos y Sol (estrella). Desaparece al quitar el cursor.
+- ✅ Duplicados eliminados: consolidación completa a `src/modules/`.
+- ⏳ Scripts de lint/format configurados pero aún no activos (`oxlint`, `oxfmt`).
 
 ## Revisión pendiente
-1. **Órbitas planetarias** — trayectorias elípticas con excentricidad e inclinación adecuadas.
-   - Los planetas parece que sí se muestran correctamente.
-   - Los planetas enanos (excepto Ceres) parecen tener trayectorias incorrectas.
-2. **Posiciones de los planetas** — posición orbital basada en parámetros keplerianos.
-   - Parece que sí.
-3. **Renderizado 3D** — proyección perspectiva, Z-sorting y oclusión correcta.
-   - Confirmado: funciona (planetas más cercanos se ven más grandes, oclusión correcta).
-4. **Controles** — panel lateral con velocidad, pausa, inclinación y toggles de visibilidad.
-   - Velocidad: funciona correctamente.
-   - Pausa: funciona bien, pero debe moverse junto a los botones de velocidad. Al pausar desactiva las etiquetas; al reanudarlas activa.
-   - Inclinación: funciona correctamente.
-   - Visibilidad: funcionan cinturón de asteroides y órbitas; no funcionan planetas, planetas enanos ni etiquetas.
-5. **Hover cards** — ficha astronómica al pasar el mouse sobre un planeta.
-   - Aparece correctamente, pero debe desaparecer al quitar el cursor del planeta.
+1. **Optimización** — Rendimiento con zoom extremo y múltiples cuerpos simultáneos.
+2. **Mejoras futuras** — Integración de datos adicionales (período de rotación, satélites principales, anillos de Saturno).
+3. **Lint/Format** — Configurar scripts `pnpm run lint` y `pnpm run format`.
 
 ## Convenciones de código y estilo
 - **Edición quirúrgica:** Lee solo las secciones necesarias antes de editar y aplica cambios precisos sin reescribir archivos completos.

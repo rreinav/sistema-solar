@@ -17,11 +17,16 @@ export function createControls() {
         <button data-speed="1" class="speed-btn active">×1</button>
         <button data-speed="10" class="speed-btn">×10</button>
         <button data-speed="100" class="speed-btn">×100</button>
+        <button id="btn-pause">⏸ Pausar</button>
       </div>
     </section>
 
     <section class="control-group">
-      <button id="btn-pause">⏸ Pausar</button>
+      <label>Zoom: <span id="zoom-value">1.0</span>x</label>
+      <input type="range" id="slider-zoom" min="0.1" max="5" step="0.1" value="1" class="zoom-slider">
+    </section>
+
+    <section class="control-group">
       <button id="btn-reset">🔄 Reiniciar cámara</button>
     </section>
 
@@ -56,6 +61,8 @@ export function createControls() {
   // Event listeners de los controles
   const btnPause = panel.querySelector("#btn-pause");
   const btnReset = panel.querySelector("#btn-reset");
+  const sliderZoom = panel.querySelector("#slider-zoom");
+  const zoomValue = panel.querySelector("#zoom-value");
   const selectInc = panel.querySelector("#select-inclination");
   const chkPlanets = panel.querySelector("#chk-planets");
   const chkAsteroids = panel.querySelector("#chk-asteroids");
@@ -72,19 +79,28 @@ export function createControls() {
     });
   });
 
-  // Pausa
+  // Pausa / Reanudar (solo controla la simulación)
   btnPause.addEventListener("click", () => {
     state.paused = !state.paused;
     btnPause.textContent = state.paused ? "▶ Reanudar" : "⏸ Pausar";
   });
 
+  // Zoom (slider)
+  sliderZoom.addEventListener("input", () => {
+    const zoom = parseFloat(sliderZoom.value);
+    state.cameraZoom = zoom;
+    zoomValue.textContent = zoom.toFixed(1);
+  });
+
   // Reiniciar cámara
   btnReset.addEventListener("click", () => {
-    state.cameraYaw = 0.5;
-    state.cameraPitch = 0.4;
+    state.cameraYaw = 0;
+    state.cameraPitch = 25 * DEG;
     state.cameraZoom = 1.0;
-    state.viewInclination = 0;
-    selectInc.value = "0";
+    state.viewInclination = 25;
+    sliderZoom.value = 1.0;
+    zoomValue.textContent = "1.0";
+    selectInc.value = "25";
   });
 
   // Inclinación
