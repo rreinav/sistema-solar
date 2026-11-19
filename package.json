@@ -1,6 +1,6 @@
 {
   "name": "sistema-solar",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Visualización interactiva del sistema solar en el navegador, con datos astronómicos reales, animación proporcional a los períodos orbitales y herramientas de control completas",
   "main": "src/index.html",
   "scripts": {

@@ -5,6 +5,8 @@ import {
   calculateAllPositions,
   drawOrbitPaths,
   generateAsteroids,
+  generateKuiperBelt,
+  generateOortCloud,
   projectPosition,
   starField
 } from "./math3d.js";
@@ -14,6 +16,8 @@ import { hexToRGBA, lightenColor, roundRect, capitalize, formatDays } from "./he
 const fmt = (n) => new Intl.NumberFormat("es-ES", { maximumFractionDigits: 3 }).format(n);
 
 let asteroidCache = [];
+let kuiperCache = [];
+let oortCache = [];
 
 /** Dibuja estrellas de fondo (distribución aleatoria real) */
 function drawStars(ctx, W, H) {
@@ -40,8 +44,10 @@ function drawBody(ctx, body) {
 
   if (isPlanet && !state.showPlanets) return;
   if (isDwarf && !state.showDwarfPlanets) return;
+  if (!body.visible) return;
 
   const r = body.visualRadius * body.scale;
+  if (!(r > 0) || !Number.isFinite(r)) return;
 
   // Anillos
   if (body.hasRings && body.category !== "star") {
@@ -217,8 +223,10 @@ export function initUI(canvas) {
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
 
-  // Generar asteroides una sola vez
+  // Generar cinturones una sola vez
   asteroidCache = generateAsteroids();
+  kuiperCache = generateKuiperBelt();
+  oortCache = generateOortCloud();
 
   // Eventos de ratón para rotación de cámara
   canvas.addEventListener("mousedown", (e) => {
@@ -293,11 +301,28 @@ export function initUI(canvas) {
       drawOrbitPaths(ctx);
     }
 
-    // Dibujar cinturón de asteroides
+    // Dibujar cinturones de asteroides (Principal, Kuiper y Oort)
     if (state.showAsteroids) {
       for (const ast of asteroidCache) {
         const proj = projectPosition(ast.x, ast.y, ast.z);
+        if (!proj.visible) continue;
         ctx.fillStyle = `rgba(180, 170, 150, ${ast.brightness})`;
+        ctx.beginPath();
+        ctx.arc(proj.screenX, proj.screenY, 1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      for (const k of kuiperCache) {
+        const proj = projectPosition(k.x, k.y, k.z);
+        if (!proj.visible) continue;
+        ctx.fillStyle = `rgba(160, 170, 200, ${k.brightness})`;
+        ctx.beginPath();
+        ctx.arc(proj.screenX, proj.screenY, 1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      for (const o of oortCache) {
+        const proj = projectPosition(o.x, o.y, o.z);
+        if (!proj.visible) continue;
+        ctx.fillStyle = `rgba(150, 160, 200, ${o.brightness})`;
         ctx.beginPath();
         ctx.arc(proj.screenX, proj.screenY, 1, 0, Math.PI * 2);
         ctx.fill();

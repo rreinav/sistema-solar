@@ -65,7 +65,7 @@ sistema-solar-qwen3.6/
 - ✅ Pausa y etiquetas independientes. Al pausar no bloquea etiquetas.
 - ✅ Hover cards con ficha astronómica para planetas, planetas enanos y Sol (estrella). Desaparece al quitar el cursor.
 - ✅ Duplicados eliminados: consolidación completa a `src/modules/`.
-- ⏳ Scripts de lint/format configurados pero aún no activos (`oxlint`, `oxfmt`).
+- ✅ Scripts de lint y format funcionando: `pnpm run lint` (oxlint con `.oxlint.json`) y `pnpm run format` (oxfmt con `.oxfmtrc.json`). Ambos con exit 0.
 
 ## Revisión pendiente
 1. **Optimización** — Rendimiento con zoom extremo y múltiples cuerpos simultáneos.

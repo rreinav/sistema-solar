@@ -258,5 +258,11 @@ export const ASTEROID_BELTS = [
     location: "Más allá de Neptuno (30–50 UA)",
     inclination: 1.5,
     suggestedCount: 300
+  },
+  {
+    name: "Nube de Oort",
+    location: "Heliósfera exterior (2.000–100.000 UA)",
+    inclination: 90, // Distribución esférica
+    suggestedCount: 500
   }
 ];
